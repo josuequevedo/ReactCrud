@@ -17,54 +17,51 @@ const style = {
 	p: 4,
 };
 
-export const ModalForm = () => {
-	const [open, setOpen] = useState(false);
-	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+export const ModalForm = ({ open, handleClose, userEdit }) => {
+	console.log('PROP', userEdit);
 	const [user, setUser] = useState({
-		name: '',
-		email: '',
-		city: '',
-		username: '',
-		website: '',
+		id: userEdit?.id,
+		name: userEdit?.name,
+		email: userEdit?.email,
+		city: userEdit?.city,
+		username: userEdit?.username,
+		website: userEdit?.website,
 	});
 
+	console.log('this is user', user?.id);
+
 	const handleChange = (e) => {
-		let property = e.target.id;
+		let property = e.target.name;
 		setUser({ ...user, [property]: e.target.value });
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		fetch('https://immense-shelf-01877.herokuapp.com/users', {
-			method: 'POST',
-			body: JSON.stringify(user),
-			headers: {
-				'Content-type': 'application/json',
-			},
-		})
-			.then((res) => res.json())
-			.then((data) => console.log(data));
-		setUser({
-			name: '',
-			email: '',
-			city: '',
-			username: '',
-			website: '',
-		});
+		if (user.id) {
+			return console.log('fineeeeeeeeeeee');
+		} else {
+			fetch('https://immense-shelf-01877.herokuapp.com/users', {
+				method: 'POST',
+				body: JSON.stringify(user),
+				headers: {
+					'Content-type': 'application/json',
+				},
+			})
+				.then((res) => res.json())
+				.then((data) => console.log(data));
+			setUser({
+				name: '',
+				email: '',
+				city: '',
+				username: '',
+				website: '',
+			});
+		}
 	};
 
 	return (
 		<Box>
-			<Button
-				sx={{ bgcolor: '#0070f3' }}
-				variant='contained'
-				onClick={handleOpen}
-			>
-				Add new User
-			</Button>
-
-			<Modal open={open} onClose={handleClose}>
+			<Modal open={open}>
 				<Box sx={style}>
 					<form action=''>
 						<Box
@@ -83,9 +80,9 @@ export const ModalForm = () => {
 							>
 								<InputLabel htmlFor='name'>Your Name</InputLabel>
 								<Input
-									id='name'
+									name='name'
 									value={user.name}
-									onChange={(e) => handleChange(e)}
+									onChange={handleChange}
 								/>
 							</FormControl>
 							<FormControl
@@ -96,9 +93,9 @@ export const ModalForm = () => {
 							>
 								<InputLabel htmlFor='email'>Your Email</InputLabel>
 								<Input
-									id='email'
+									name='email'
 									value={user.email}
-									onChange={(e) => handleChange(e)}
+									onChange={handleChange}
 								/>
 							</FormControl>
 							<FormControl
@@ -109,9 +106,9 @@ export const ModalForm = () => {
 							>
 								<InputLabel htmlFor='city'>Your City</InputLabel>
 								<Input
-									id='city'
+									name='city'
 									value={user.city}
-									onChange={(e) => handleChange(e)}
+									onChange={handleChange}
 								/>
 							</FormControl>
 							<FormControl
@@ -122,9 +119,9 @@ export const ModalForm = () => {
 							>
 								<InputLabel htmlFor='username'>Your Username</InputLabel>
 								<Input
-									id='username'
+									name='username'
 									value={user.username}
-									onChange={(e) => handleChange(e)}
+									onChange={handleChange}
 								/>
 							</FormControl>
 							<FormControl
@@ -135,9 +132,9 @@ export const ModalForm = () => {
 							>
 								<InputLabel htmlFor='website'>Your Website</InputLabel>
 								<Input
-									id='website'
+									name='website'
 									value={user.website}
-									onChange={(e) => handleChange(e)}
+									onChange={handleChange}
 								/>
 							</FormControl>
 							<Box
@@ -151,7 +148,7 @@ export const ModalForm = () => {
 									sx={{ bgcolor: '#0070f3' }}
 									type='submit'
 									variant='contained'
-									onClick={(e) => handleSubmit(e)}
+									onClick={handleSubmit}
 								>
 									Send
 								</Button>

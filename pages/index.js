@@ -8,18 +8,18 @@ export default function Home() {
 	const [users, setUsers] = useState([]);
 
 	const queryData = async () => {
-		const data = await fetch(
-			'https://immense-shelf-01877.herokuapp.com/users'
-		);
-		const usersData = await data.json();
-		setUsers(usersData);
+		return await fetch('https://immense-shelf-01877.herokuapp.com/users')
+			.then((res) => res.json())
+			.then((data) => setUsers(data));
 	};
 
 	useEffect(() => {
 		queryData();
 		console.log('desde el useEffect!!!');
-	}, [users]);
-
+	}, []);
+	if (users.length === 0) {
+		return <h1>Loading</h1>;
+	}
 	return (
 		<div className={styles.container}>
 			<Head>
