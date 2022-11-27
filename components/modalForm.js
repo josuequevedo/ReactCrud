@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Input, FormControl, InputLabel } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const style = {
 	position: 'absolute',
@@ -18,17 +18,21 @@ const style = {
 };
 
 export const ModalForm = ({ open, handleClose, userEdit }) => {
-	console.log('PROP', userEdit);
+// cuando recibes el props lo pasas directo por el useEffect no hace 
+// falta al estado inicializado, el estado lo puedes dejar con valores vacios
 	const [user, setUser] = useState({
-		id: userEdit?.id,
-		name: userEdit?.name,
-		email: userEdit?.email,
-		city: userEdit?.city,
-		username: userEdit?.username,
-		website: userEdit?.website,
+		id: 0,
+		name: "",
+		email: "",
+		city: "",
+		username: "",
+		website: "",
 	});
-
-	console.log('this is user', user?.id);
+// varón te faltaba este useEffect aqui pero no 
+//lo veis por estar pensando en carne con papa
+	useEffect(()=>{
+		setUser(userEdit)
+	},[userEdit])
 
 	const handleChange = (e) => {
 		let property = e.target.name;
@@ -36,7 +40,6 @@ export const ModalForm = ({ open, handleClose, userEdit }) => {
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
 		if (user.id) {
 			return console.log('fineeeeeeeeeeee');
 		} else {
