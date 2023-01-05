@@ -12,15 +12,30 @@ import { ModalForm } from './modalForm';
 import { useState } from 'react';
 
 export const UserList = ({ userData }) => {
-	/* 	const { id, name, email, city, username, website } = userData; */
 
+// Cuando este componente se renderiza tambien lo hace el modal , el estado 
+// userEdit pertenece a este componente y en el find cuando encuentras el user por id
+// aunque lo pasas por props el otro estado no lo capta porque ya se renderizo
+// al inicio de este componente y la unica forma de modificar un estado existente 
+// despues de haber renderizado es con el hook useEffect (Efecto secundario)
+// es por eso que cada vez que vas a editar un user debes decirle al useEffect que 
+// renderice un nuevo estado , por eso le pasas en el watcher [userEdit] , asi el useEffect
+// cada vez que recibe un nuevo userEdit se vuelve a ejecutar y setea los valores en el form
+// con react query no pasa esto porque es un estado persistente, hay mayores detalles
+// pero yo no los conozco todos
 	const [open, setOpen] = useState(false);
 	const [userEdit, setUserEdit] = useState({});
 	const handleClose = () => {
-		setOpen(false);
+		setOpen(false); 
 		setUserEdit({});
 	};
 
+	const handleOpen = () => setOpen(true);
+
+	const findUser = async (id) => {
+		const userFound = await userData.find( item => item.id === id)
+		setUserEdit(userFound)
+	}
 	return (
 		<>
 			<ModalForm
@@ -32,7 +47,7 @@ export const UserList = ({ userData }) => {
 				<Button
 					sx={{ bgcolor: '#0070f3' }}
 					variant='contained'
-					onClick={() => setOpen(true)}
+					onClick={() => handleOpen()}
 				>
 					Add new User
 				</Button>
@@ -51,7 +66,7 @@ export const UserList = ({ userData }) => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{userData.map((user) => (
+							{userData && userData.map((user) => (
 								<TableRow key={user.id}>
 									<TableCell>{user.id}</TableCell>
 									<TableCell align='right'>{user.name}</TableCell>
@@ -63,12 +78,10 @@ export const UserList = ({ userData }) => {
 										<Button
 											variant='outlined'
 											color='warning'
-											onClick={() => {
-												let dataEdit = userData.find(
-													(element) => element.id === user.id
-												);
-												setUserEdit(dataEdit);
-												setOpen(true);
+											onClick={async ()=> {
+												await findUser(user.id)
+												handleOpen()
+												
 											}}
 										>
 											Edit
